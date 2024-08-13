@@ -3,7 +3,7 @@ import PasswordInput from '@components/PasswordInput';
 import Spring from '@components/Spring';
 import {Fragment} from 'react';
 import {toast} from 'react-toastify';
-import { supabase } from '../utils/superbase';
+import { supabase } from '../hooks/useSuperbaseQuery.js';
 
 // hooks
 import {useForm, Controller} from 'react-hook-form';
@@ -26,13 +26,13 @@ const SignUpForm = ({standalone = true}) => {
     const wrapperProps = standalone ? {} : {className: 'card card-padded'};
 
     const onSubmit = async (data) => {
-        try {
+        try { 
             console.log('creating user: ', data);
             await supabase.auth.signUp({
                 email: data.email,
                 password: data.password,
                 options: {
-                    emailRedirectTo: '/welcome',
+                    emailRedirectTo: '/',
                     data: {
                         first_name: data.firstName,
                         last_name: data.lastName,

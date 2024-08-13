@@ -6,6 +6,7 @@ import { useWindowSize } from 'react-use';
 import useAuthRoute from '@hooks/useAuthRoute';
 import ThemeStyles from '@styles/theme';
 import './style.scss';
+import 'react-toastify/dist/ReactToastify.css';
 import { SidebarProvider } from '@contexts/sidebarContext';
 import { ThemeProvider } from 'styled-components';
 import { StyleSheetManager } from 'styled-components';
@@ -21,7 +22,7 @@ import BottomNav from '@layout/BottomNav';
 import Navbar from '@layout/Navbar';
 import ShoppingCart from '@widgets/ShoppingCart';
 import ScrollToTop from '@components/ScrollToTop';
-import { supabase } from './utils/superbase';
+import { supabase } from './hooks/useSuperbaseQuery.js';
 
 const ClubSummary = lazy(() => import('@pages/ClubSummary'));
 const GameSummary = lazy(() => import('@pages/GameSummary'));
@@ -110,7 +111,7 @@ const App = () => {
                                             <Routes>
                                                 {session ? (
                                                     <>
-                                                        <Route path="/welcome" element={<ClubSummary />} />
+                                                        <Route path="/" element={<ClubSummary />} />
                                                         <Route path="/game-summary" element={<GameSummary />} />
                                                         <Route path="/championships" element={<Championships />} />
                                                         <Route path="/league-overview" element={<LeagueOverview />} />

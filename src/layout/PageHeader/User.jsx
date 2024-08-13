@@ -11,6 +11,8 @@ import {useWindowSize} from 'react-use';
 import {useState} from 'react';
 import useStoreRoute from '@hooks/useStoreRoute';
 import {useShopProvider} from '@contexts/shopContext';
+import { supabase } from '../../hooks/useSuperbaseQuery.js';
+import {useNavigate} from 'react-router-dom';
 
 // assets
 import user from '@assets/user.webp';
@@ -21,6 +23,7 @@ const User = () => {
     const isTablet = useWindowSize().width < 1280;
     const isStoreRoute = useStoreRoute();
     const {setCartOpen} = useShopProvider();
+    const navigate = useNavigate();
 
     const settingsPopup = {
         label: 'UI Settings',
@@ -36,6 +39,11 @@ const User = () => {
         {
             label: 'Logout',
             icon: 'exit',
+            onClick: async () => {
+                await supabase.auth.signOut().then(res => {
+                    navigate('/')
+                })
+            }
         }
     ];
 

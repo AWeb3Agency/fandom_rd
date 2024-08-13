@@ -7,6 +7,8 @@ import ResetPasswordPopup from '@components/ResetPasswordPopup';
 import {useForm, Controller} from 'react-hook-form';
 import {useNavigate} from 'react-router-dom';
 import {useState} from 'react';
+import { supabase } from '../hooks/useSuperbaseQuery.js';
+import {toast} from 'react-toastify';
 
 // utils
 import classNames from 'classnames';
@@ -22,7 +24,25 @@ const LoginForm = () => {
     });
     const navigate = useNavigate();
 
-    const onSubmit = () => navigate('/');
+    const onSubmit = async(data) => {
+        try { 
+            console.log('creating user: ', data);
+            await supabase.auth.signInWithPassword({
+                email: data.email,
+                password: data.password
+            }).then((userData)=> {
+                console.log('user logged in: ', userData);
+                if (userData.error){
+                    console.log('error: ', userData.error.message);
+                    toast.error(userData.error.message)
+                }
+                navigate('/')
+            })   
+        } catch (error) {
+            console.log('error: ', error);
+            toast.error(`Error while creating Account! Please check the console.`)
+        }
+    };
 
     const handleResetPassword = e => {
         e.preventDefault();
@@ -32,7 +52,7 @@ const LoginForm = () => {
     return (
         <>
             <h1>Account login</h1>
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="d-flex flex-column g-10" style={{margin: '20px 0 30px'}}>
                     <div className="d-flex flex-column g-20">
                         <input className={classNames('field', {'field--error': errors.email})}
@@ -66,7 +86,7 @@ const LoginForm = () => {
                     </div>
                 </div>
                 <div className="d-flex justify-content-between align-items-center">
-                    <button className="btn btn--sm" type="submit" onClick={handleSubmit(onSubmit)}>
+                    <button className="btn btn--sm" type="submit">
                         Submit
                     </button>
                     <button className="text-button text-button--sm" onClick={handleResetPassword}>

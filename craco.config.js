@@ -2,6 +2,16 @@ const path = require('path');
 
 module.exports = {
     webpack: {
+        configure: (webpackConfig, { env, paths }) => {
+            // Add the fallback for querystring
+            webpackConfig.resolve.fallback = {
+              querystring: require.resolve('querystring-es3'), // or `false` if not needed
+              https: require.resolve('https-browserify'),
+              http: require.resolve('stream-http'),
+            };
+      
+            return webpackConfig;
+        },
         alias: {
             '@components': path.resolve(__dirname, 'src/components'),
             '@ui': path.resolve(__dirname, 'src/ui'),

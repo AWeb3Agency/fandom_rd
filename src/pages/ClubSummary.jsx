@@ -13,10 +13,12 @@ import TeamResults from '@widgets/TeamResults';
 import LeagueStandings from '@widgets/LeagueStandings';
 import { supabase } from '../hooks/useSuperbaseQuery.js';
 import { getUser } from '../hooks/useSuperbaseAuth.js';
+import { fetchTeamByName } from '../hooks/useSerpAPI.js'; // Adjust the path as needed
 
 const ClubSummary = () => {
     const [user, setUser] = useState(null);
     const [club, setClub] = useState(null);
+    const [team, setTeam] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -89,6 +91,39 @@ const ClubSummary = () => {
             fetchClub();
         }
     }, [user?.club_id]);
+
+    useEffect(() => {
+        const statsClub = async () => {
+            setLoading(true);
+            try {
+                // getting club
+                const { data, error } = await supabase
+                    .from('clubs')
+                    .select('*')
+                    .eq('id', user.club_id);
+
+                if (error) {
+                    error(data);
+                } else {
+                    console.log('user has this club selected: ', data[0]);
+                    setClub(data[0]);
+                    // get team stats
+                    console.log('getting team stats: ', new Date().getFullYear(), data[0].football_api_id);
+                    fetchTeamByName('Manchester United F.C.').then(team =>{
+                        console.log('team stats: ', team);
+                        setTeam(team);
+                    })
+                }
+            } catch (err) {
+                setError(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        if (club?.id){
+            statsClub();
+        }
+    }, [club?.id]);
 
     // Handle loading and error states for both user and user profile
     if (loading) return <p>Loading...</p>;
